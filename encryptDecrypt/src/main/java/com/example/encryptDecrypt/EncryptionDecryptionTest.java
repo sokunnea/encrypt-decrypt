@@ -73,7 +73,7 @@ public class EncryptionDecryptionTest {
     public static void main(String[] args)
     {
         /* Message to be encrypted. */
-        String originalval = "AES Encryption";
+        String originalval = "AES Encryption fdfdffdfdfd5545455";
         /* Call the encrypt() method and store result of encryption. */
         String encryptedval = encrypt(originalval);
         /* Call the decrypt() method and store result of decryption. */
