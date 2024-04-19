@@ -18,8 +18,7 @@ public class EncryptionDecryptionTest {
     private static final String SALTVALUE = "abcdefg";
 
     /* Encryption Method */
-    public static String encrypt(String strToEncrypt)
-    {
+    public static String encrypt(String strToEncrypt){
         try
         {
             /* Declare a byte array. */
