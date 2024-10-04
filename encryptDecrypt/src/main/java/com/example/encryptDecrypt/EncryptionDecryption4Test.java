@@ -1,14 +1,6 @@
 package com.example.encryptDecrypt;
 
-import javax.crypto.*;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.StandardCharsets;
 import java.security.*;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
-import java.util.Base64;
 
 public class EncryptionDecryption4Test {
     public static void main(String[] args) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
@@ -22,43 +14,40 @@ public class EncryptionDecryption4Test {
         PublicKey publicKey = rsaKeyPair.getPublic();
         PrivateKey privateKey = rsaKeyPair.getPrivate();
 
-        String document = "lol signature key";//The quick brown fox jumps over the lazy dog
+        String document = "dpb";//The quick brown fox jumps over the lazy dog
         // sign
         Signature signature = Signature.getInstance("SHA256withRSA");
         signature.initSign(privateKey);
         signature.update(document.getBytes());
         byte[] sig = signature.sign();
-        System.out.println("sig :"+sig);
+//        System.out.println("sig :"+sig);
 
-        // verify with full message
-        System.out.println("\nverify the signature with the full document");
+        // verify sign with document
+        System.out.println("verify the signature with document");
         Signature signatureVerify = Signature.getInstance("SHA256withRSA");
         signatureVerify.initVerify(publicKey);
         signatureVerify.update(document.getBytes());
         boolean sigVerified =  signatureVerify.verify(sig);
-        System.out.println("sigVerified: " + sigVerified);
+        System.out.println("Verified: " + sigVerified);
         System.out.println("public key: "+publicKey);
         System.out.println("private key: "+privateKey);
 
-        // verify just the sha256 hash of the document
-        System.out.println("\nverify the signature with the SHA256 of the document only");
+        // verify SHA256 hash of the document
+        System.out.println("verify the signature SHA256 of the document");
         byte[] documentHash = MessageDigest.getInstance("SHA-256").digest(document.getBytes());
-        // you need to prepend some bytes: 30 31 30 0D 06 09 60 86 48 01 65 03 04 02 01 05 00 04 20
-        // see https://www.rfc-editor.org/rfc/rfc3447#page-41
-        // warning: this string is only for SHA-256 algorithm !!
         String prependSha256String = "3031300D060960864801650304020105000420";
         byte[] prependSha256 = hexStringToByteArray(prependSha256String);
         int combinedLength = prependSha256.length + documentHash.length;
         byte[] documentHashFull = new byte[combinedLength];
         System.arraycopy(prependSha256, 0, documentHashFull, 0, prependSha256.length);
         System.arraycopy(documentHash, 0, documentHashFull, prependSha256.length, documentHash.length);
+
         // lets verify
         Signature signatureVerifyHash = Signature.getInstance("NonewithRSA");
         signatureVerifyHash.initVerify(publicKey);
-        // signatureVerifyHash.update(document.getBytes());
         signatureVerifyHash.update(documentHashFull);
         boolean sigVerifiedHash =  signatureVerifyHash.verify(sig);
-        System.out.println("sigVerifiedHash: " + sigVerifiedHash);
+        System.out.println("VerifiedHash: " + sigVerifiedHash);
     }
 
     public static byte[] hexStringToByteArray(String s) {
